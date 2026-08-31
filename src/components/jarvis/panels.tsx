@@ -436,16 +436,19 @@ export function QuickLaunch({ className }: { className?: string }) {
 export function PowerCore() {
   return (
     <Panel title="Power Core">
-      <div className="flex items-center gap-4">
-        <div className="w-28 space-y-1">
+      <div className="flex h-full items-center gap-4">
+        <div className="w-44 shrink-0">
           <div className="hud-label">Arc Reactor</div>
           <div className="font-display text-2xl text-online text-glow">100%</div>
-          <Stat label="Output" value="1.21 TW" />
-          <Stat label="Efficiency" value="99.9%" />
-          <Stat label="Battery" value="98%" tone="online" />
-          <Stat label="Stability" value="Stable" tone="online" />
+          <div className="mt-1 grid grid-cols-2 gap-x-2 gap-y-1">
+            <Stat label="Output" value="1.21 TW" />
+            <Stat label="Efficiency" value="99.9%" />
+            <Stat label="Battery" value="98%" tone="online" />
+            <Stat label="Stability" value="Stable" tone="online" />
+          </div>
         </div>
-        <div className="relative flex h-28 flex-1 items-center justify-center">
+        <div className="relative flex h-24 flex-1 items-center justify-center">
+
           <div className="absolute inset-0 rounded-full animate-hud-spin border border-cyan/30" />
           <div className="absolute inset-3 rounded-full animate-hud-spin-rev border border-dashed border-cyan/40" />
           <div
