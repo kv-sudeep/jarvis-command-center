@@ -643,7 +643,7 @@ export function GlobalTracking() {
         ))}
         <svg className="absolute inset-0 h-full w-full">
           {nodes.slice(1).map(([x, y], i) => {
-            const [px, py] = nodes[i];
+            const [px, py] = nodes[i] ?? [0, 0];
             return (
               <line
                 key={i}
