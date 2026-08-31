@@ -1,19 +1,18 @@
 import { useEffect, useLayoutEffect, useState, type ReactNode } from "react";
 
 const BASE_W = 1920;
-const BASE_H = 1080;
+const MIN_H = 900;
 
 /**
- * Scales a fixed 1920x1080 HUD canvas to fit the viewport exactly.
- * Guarantees the whole interface is visible at once with no scrolling.
+ * Scales a fixed-width (1920px) HUD canvas so the whole interface fits the
+ * viewport exactly — no page scrolling, no letterboxing.
  */
 export function FitScreen({ children }: { children: ReactNode }) {
-  const [scale, setScale] = useState(1);
+  const [box, setBox] = useState({ scale: 1, height: MIN_H });
 
   const measure = () => {
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-    setScale(Math.min(w / BASE_W, h / BASE_H));
+    const scale = window.innerWidth / BASE_W;
+    setBox({ scale, height: Math.max(window.innerHeight / scale, MIN_H) });
   };
 
   useLayoutEffect(() => {
@@ -28,12 +27,11 @@ export function FitScreen({ children }: { children: ReactNode }) {
   return (
     <div className="fixed inset-0 overflow-hidden">
       <div
-        className="absolute left-1/2 top-1/2"
         style={{
           width: BASE_W,
-          height: BASE_H,
-          transform: `translate(-50%, -50%) scale(${scale})`,
-          transformOrigin: "center center",
+          height: box.height,
+          transform: `scale(${box.scale})`,
+          transformOrigin: "top left",
         }}
       >
         {children}
