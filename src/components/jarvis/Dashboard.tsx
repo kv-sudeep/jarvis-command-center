@@ -26,6 +26,7 @@ import {
   Workflow,
 } from "lucide-react";
 import { CoreCanvas } from "./CoreCanvas";
+import { FitScreen } from "./FitScreen";
 import {
   AiQuickControls,
   CalendarEvents,
