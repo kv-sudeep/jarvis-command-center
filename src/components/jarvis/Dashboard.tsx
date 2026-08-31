@@ -26,6 +26,7 @@ import {
   Workflow,
 } from "lucide-react";
 import { CoreCanvas } from "./CoreCanvas";
+import { FitScreen } from "./FitScreen";
 import {
   AiQuickControls,
   CalendarEvents,
@@ -211,7 +212,7 @@ function CentralCore() {
   }, []);
 
   return (
-    <div className="relative min-h-[22rem] flex-1">
+    <div className="relative min-h-0 flex-1">
       <div className="absolute inset-0">
         <CoreCanvas />
       </div>
@@ -258,58 +259,62 @@ function Dock() {
 
 export function Dashboard() {
   return (
-    <div className="min-h-screen">
-      <Header />
-      <main className="flex gap-2.5 px-3">
-        <SideNav />
+    <FitScreen>
+      <div className="flex h-full w-full flex-col overflow-hidden">
+        <Header />
+        <main className="flex min-h-0 flex-1 gap-2.5 px-3">
+          <SideNav />
 
-        <div className="flex min-w-0 flex-1 flex-col gap-2.5">
-          <div className="grid grid-cols-1 gap-2.5 xl:grid-cols-[17rem_minmax(0,1fr)_17rem]">
-            <div className="flex flex-col gap-2.5">
-              <SuitStatus />
-              <CurrentTasks />
-              <SystemMonitor />
-            </div>
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-2.5">
+            <div className="grid min-h-0 flex-[2] grid-cols-[17rem_minmax(0,1fr)_17rem] gap-2.5">
+              <div className="flex min-h-0 flex-col gap-2.5">
+                <SuitStatus className="flex-[1.1]" />
+                <CurrentTasks className="flex-[0.9]" />
+                <SystemMonitor className="flex-1" />
+              </div>
 
-            <div className="flex min-w-0 flex-col gap-2.5">
-              <AiQuickControls />
-              <CentralCore />
-              <CoreShortcuts />
-              <div className="grid grid-cols-1 gap-2.5 md:grid-cols-2">
-                <PowerCore />
-                <EnergyDistribution />
+              <div className="flex min-h-0 min-w-0 flex-col gap-2.5">
+                <AiQuickControls />
+                <CentralCore />
+                <CoreShortcuts />
+                <div className="grid h-[15rem] shrink-0 grid-cols-2 gap-2.5">
+                  <PowerCore />
+                  <EnergyDistribution />
+                </div>
+              </div>
+
+              <div className="flex min-h-0 flex-col gap-2.5">
+                <FlightControl className="flex-[1.1]" />
+                <DroneFleet className="flex-[1.2]" />
+                <QuickLaunch className="flex-[0.8]" />
+                <VoiceCommand className="flex-[0.9]" />
               </div>
             </div>
 
-            <div className="flex flex-col gap-2.5">
-              <FlightControl />
-              <DroneFleet />
-              <QuickLaunch />
-              <VoiceCommand />
+            <div className="grid min-h-0 flex-[0.52] grid-cols-3 gap-2.5">
+              <SecurityCenter />
+              <DataStream />
+              <SystemLogs />
+            </div>
+
+            <div className="grid min-h-0 flex-[0.62] grid-cols-4 gap-2.5">
+
+              <LiveFeed />
+              <GlobalTracking />
+              <CalendarEvents />
+              <NewsUpdates />
             </div>
           </div>
-
-          <div className="grid grid-cols-1 gap-2.5 md:grid-cols-2 xl:grid-cols-3">
-            <SecurityCenter />
-            <DataStream />
-            <SystemLogs />
-          </div>
-
-          <div className="grid grid-cols-1 gap-2.5 pb-2 md:grid-cols-2 xl:grid-cols-4">
-            <LiveFeed />
-            <GlobalTracking />
-            <CalendarEvents />
-            <NewsUpdates />
-          </div>
+        </main>
+        <Dock />
+        <div className="pointer-events-none absolute bottom-2 right-3 flex items-center gap-2 font-mono text-[0.55rem] text-cyan/60">
+          <LayoutGrid className="h-3 w-3" />
+          <GaugeIcon className="h-3 w-3" />
+          <Radar className="h-3 w-3" />
+          SYSTEM NOMINAL
         </div>
-      </main>
-      <Dock />
-      <div className="pointer-events-none fixed bottom-2 right-3 flex items-center gap-2 font-mono text-[0.55rem] text-cyan/60">
-        <LayoutGrid className="h-3 w-3" />
-        <GaugeIcon className="h-3 w-3" />
-        <Radar className="h-3 w-3" />
-        SYSTEM NOMINAL
       </div>
-    </div>
+    </FitScreen>
   );
 }
+
