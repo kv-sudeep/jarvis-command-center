@@ -212,7 +212,7 @@ function CentralCore() {
   }, []);
 
   return (
-    <div className="relative min-h-[22rem] flex-1">
+    <div className="relative min-h-0 flex-1">
       <div className="absolute inset-0">
         <CoreCanvas />
       </div>
