@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 const BASE_W = 1920;
 const MIN_H = 900;
@@ -15,11 +15,8 @@ export function FitScreen({ children }: { children: ReactNode }) {
     setBox({ scale, height: Math.max(window.innerHeight / scale, MIN_H) });
   };
 
-  useLayoutEffect(() => {
-    measure();
-  }, []);
-
   useEffect(() => {
+    measure();
     window.addEventListener("resize", measure);
     return () => window.removeEventListener("resize", measure);
   }, []);
