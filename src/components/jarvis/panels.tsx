@@ -41,9 +41,9 @@ import cityImage from "@/assets/jarvis-city.png";
 
 /* ------------------------------- Suit status ------------------------------ */
 
-export function SuitStatus() {
+export function SuitStatus({ className }: { className?: string }) {
   return (
-    <Panel title="Suit Status — Mark LXXXV">
+    <Panel title="Suit Status — Mark LXXXV" className={className}>
       <div className="flex gap-3">
         <div className="relative w-24 shrink-0 overflow-hidden rounded-sm scanline">
           <img src={suitImage} alt="Holographic armor schematic" className="h-full w-full object-cover" loading="lazy" />
@@ -80,9 +80,9 @@ const TASKS = [
   { name: "Background AI tasks", state: "Running", progress: 88 },
 ];
 
-export function CurrentTasks() {
+export function CurrentTasks({ className }: { className?: string }) {
   return (
-    <Panel title="Current Tasks">
+    <Panel title="Current Tasks" className={className}>
       <ul className="space-y-2">
         {TASKS.map((t) => (
           <li key={t.name} className="space-y-1">
@@ -134,7 +134,7 @@ function useDrift(seed: number, base: number, spread = 6) {
   return v;
 }
 
-export function SystemMonitor() {
+export function SystemMonitor({ className }: { className?: string }) {
   const cpu = useDrift(1, 28);
   const ram = useDrift(2, 62);
   const gpu = useDrift(3, 41);
@@ -145,7 +145,7 @@ export function SystemMonitor() {
   );
 
   return (
-    <Panel title="System Monitor">
+    <Panel title="System Monitor" className={className}>
       <div className="grid grid-cols-4 gap-1">
         <Gauge label="CPU" value={cpu} />
         <Gauge label="RAM" value={ram} />
@@ -228,7 +228,7 @@ export function CoreShortcuts() {
 
 /* ---------------------------- Flight control ------------------------------ */
 
-export function FlightControl() {
+export function FlightControl({ className }: { className?: string }) {
   const systems = [
     { label: "Repulsors", value: "Online" },
     { label: "Unibeam", value: "Online" },
@@ -237,7 +237,7 @@ export function FlightControl() {
     { label: "Missiles", value: "Armed" },
   ];
   return (
-    <Panel title="Flight Control">
+    <Panel title="Flight Control" className={className}>
       <div className="flex gap-3">
         <div className="w-24 shrink-0 space-y-2">
           <Stat label="Altitude" value="10,900 FT" />
@@ -286,9 +286,9 @@ const DRONES = [
   { id: "GAMMA 02", battery: 43, signal: 71 },
 ];
 
-export function DroneFleet() {
+export function DroneFleet({ className }: { className?: string }) {
   return (
-    <Panel title="Drone Fleet">
+    <Panel title="Drone Fleet" className={className}>
       <div className="flex gap-3">
         <div className="relative aspect-square flex-1">
           <div className="absolute inset-0 rounded-full border border-cyan/30" />
@@ -362,10 +362,10 @@ const COMMANDS = [
   "Send message",
 ];
 
-export function VoiceCommand() {
+export function VoiceCommand({ className }: { className?: string }) {
   const bars = useMemo(() => Array.from({ length: 34 }, () => 20 + Math.random() * 80), []);
   return (
-    <Panel title="Voice Command">
+    <Panel title="Voice Command" className={className}>
       <div className="flex h-16 items-center justify-center gap-[3px]">
         {bars.map((h, i) => (
           <span
@@ -419,9 +419,9 @@ const APPS = [
   { icon: Bot, label: "AI Chat" },
 ];
 
-export function QuickLaunch() {
+export function QuickLaunch({ className }: { className?: string }) {
   return (
-    <Panel title="Quick Launch">
+    <Panel title="Quick Launch" className={className}>
       <div className="grid grid-cols-3 gap-1.5">
         {APPS.map((a) => (
           <IconTile key={a.label} icon={a.icon} label={a.label} />
