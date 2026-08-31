@@ -266,38 +266,39 @@ export function Dashboard() {
           <SideNav />
 
           <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-2.5">
-            <div className="grid min-h-0 flex-[1.45] grid-cols-[17rem_minmax(0,1fr)_17rem] gap-2.5">
+            <div className="grid min-h-0 flex-[2] grid-cols-[17rem_minmax(0,1fr)_17rem] gap-2.5">
               <div className="flex min-h-0 flex-col gap-2.5">
-                <SuitStatus />
-                <CurrentTasks />
-                <SystemMonitor />
+                <SuitStatus className="flex-[1.1]" />
+                <CurrentTasks className="flex-[0.9]" />
+                <SystemMonitor className="flex-1" />
               </div>
 
               <div className="flex min-h-0 min-w-0 flex-col gap-2.5">
                 <AiQuickControls />
                 <CentralCore />
                 <CoreShortcuts />
-                <div className="grid min-h-0 grid-cols-2 gap-2.5">
+                <div className="grid h-[10.5rem] shrink-0 grid-cols-2 gap-2.5">
                   <PowerCore />
                   <EnergyDistribution />
                 </div>
               </div>
 
               <div className="flex min-h-0 flex-col gap-2.5">
-                <FlightControl />
-                <DroneFleet />
-                <QuickLaunch />
-                <VoiceCommand />
+                <FlightControl className="flex-[1.1]" />
+                <DroneFleet className="flex-[1.2]" />
+                <QuickLaunch className="flex-[0.8]" />
+                <VoiceCommand className="flex-[0.9]" />
               </div>
             </div>
 
-            <div className="grid min-h-0 flex-[0.55] grid-cols-3 gap-2.5">
+            <div className="grid min-h-0 flex-[0.52] grid-cols-3 gap-2.5">
               <SecurityCenter />
               <DataStream />
               <SystemLogs />
             </div>
 
-            <div className="grid min-h-0 flex-[0.6] grid-cols-4 gap-2.5">
+            <div className="grid min-h-0 flex-[0.62] grid-cols-4 gap-2.5">
+
               <LiveFeed />
               <GlobalTracking />
               <CalendarEvents />
