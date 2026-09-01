@@ -267,8 +267,7 @@ export function FlightControl({ className }: { className?: string }) {
           </button>
         ))}
       </div>
-      <div className="mt-2 text-center hud-label">Ready for takeoff</div>
-      <button className="mt-1 w-full hud-tile py-1.5 font-display text-[0.7rem] tracking-[0.3em] text-cyan text-glow">
+      <button className="mt-1.5 w-full shrink-0 hud-tile py-1 font-display text-[0.66rem] tracking-[0.3em] text-cyan text-glow">
         ENGAGE
       </button>
     </Panel>
