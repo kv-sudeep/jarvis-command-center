@@ -237,9 +237,9 @@ export function FlightControl({ className }: { className?: string }) {
     { label: "Missiles", value: "Armed" },
   ];
   return (
-    <Panel title="Flight Control" className={className}>
-      <div className="flex gap-3">
-        <div className="w-24 shrink-0 space-y-2">
+    <Panel title="Flight Control" className={className} bodyClassName="flex flex-col">
+      <div className="flex min-h-0 flex-1 gap-3">
+        <div className="w-24 shrink-0 space-y-0.5">
           <Stat label="Altitude" value="10,900 FT" />
           <Stat label="Speed" value="620 MPH" />
           <Stat label="Heading" value="270°" />
