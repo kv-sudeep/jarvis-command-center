@@ -341,7 +341,7 @@ export function DroneFleet({ className }: { className?: string }) {
           </ul>
         </div>
       </div>
-      <div className="mt-2 text-center hud-label">
+      <div className="mt-1 shrink-0 text-center hud-label">
         Fleet status: <span className="text-online">Optimal</span>
       </div>
     </Panel>
