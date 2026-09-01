@@ -422,7 +422,7 @@ const APPS = [
 export function QuickLaunch({ className }: { className?: string }) {
   return (
     <Panel title="Quick Launch" className={className}>
-      <div className="grid grid-cols-4 gap-1">
+      <div className="grid h-full grid-cols-6 grid-rows-2 gap-1">
         {APPS.map((a) => (
           <IconTile key={a.label} icon={a.icon} label={a.label} />
         ))}
