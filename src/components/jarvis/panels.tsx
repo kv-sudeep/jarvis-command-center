@@ -383,10 +383,10 @@ export function VoiceCommand({ className }: { className?: string }) {
         <div className="mt-1 hud-title animate-hud-pulse">Listening…</div>
         <div className="text-[0.7rem] italic text-muted-foreground">"How can I help you, Sir?"</div>
       </div>
-      <div className="mt-2 min-h-0 flex-1 overflow-hidden border-t border-border pt-2">
-        <div className="hud-label mb-1">Suggested commands</div>
+      <div className="mt-1 min-h-0 flex-1 overflow-hidden border-t border-border pt-1">
+        <div className="hud-label mb-0.5">Suggested commands</div>
         <ul className="space-y-0.5">
-          {COMMANDS.map((c) => (
+          {COMMANDS.slice(0, 3).map((c) => (
             <li key={c} className="flex items-center gap-2 text-[0.7rem] text-foreground/85">
               <MessageSquare className="h-3 w-3 text-cyan" />
               {c}
