@@ -318,7 +318,7 @@ export function DroneFleet({ className }: { className?: string }) {
             />
           ))}
         </div>
-        <div className="w-[54%] space-y-1.5">
+        <div className="min-w-0 flex-1 space-y-1">
           <div className="hud-tile px-2 py-1">
             <div className="hud-label">Active Devices</div>
             <div className="font-mono text-lg text-online text-glow">12</div>
