@@ -447,7 +447,7 @@ export function PowerCore() {
             <Stat label="Stability" value="Stable" tone="online" />
           </div>
         </div>
-        <div className="relative flex h-24 flex-1 items-center justify-center">
+        <div className="relative flex aspect-square h-full max-h-28 items-center justify-center">
 
           <div className="absolute inset-0 rounded-full animate-hud-spin border border-cyan/30" />
           <div className="absolute inset-3 rounded-full animate-hud-spin-rev border border-dashed border-cyan/40" />
