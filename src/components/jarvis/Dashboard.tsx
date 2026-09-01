@@ -277,7 +277,7 @@ export function Dashboard() {
                 <AiQuickControls />
                 <CentralCore />
                 <CoreShortcuts />
-                <div className="grid h-[15rem] shrink-0 grid-cols-2 gap-2.5">
+                <div className="grid h-[16rem] shrink-0 grid-cols-2 gap-2.5">
                   <PowerCore />
                   <EnergyDistribution />
                 </div>
