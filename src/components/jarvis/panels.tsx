@@ -627,8 +627,8 @@ export function GlobalTracking() {
     [40, 72],
   ];
   return (
-    <Panel title="Global Tracking">
-      <div className="relative h-36 overflow-hidden rounded-sm border border-cyan/20 bg-cyan/5">
+    <Panel title="Global Tracking" bodyClassName="flex flex-col">
+      <div className="relative min-h-0 flex-1 overflow-hidden rounded-sm border border-cyan/20 bg-cyan/5">
         <div
           className="absolute inset-0 opacity-40"
           style={{
