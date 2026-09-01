@@ -287,8 +287,8 @@ const DRONES = [
 
 export function DroneFleet({ className }: { className?: string }) {
   return (
-    <Panel title="Drone Fleet" className={className}>
-      <div className="flex gap-3">
+    <Panel title="Drone Fleet" className={className} bodyClassName="flex flex-col">
+      <div className="flex min-h-0 flex-1 gap-3 overflow-hidden">
         <div className="relative aspect-square flex-1">
           <div className="absolute inset-0 rounded-full border border-cyan/30" />
           <div className="absolute inset-[18%] rounded-full border border-cyan/25" />
