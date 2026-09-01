@@ -260,7 +260,7 @@ export function FlightControl({ className }: { className?: string }) {
           ))}
         </ul>
       </div>
-      <div className="mt-2 grid grid-cols-4 gap-1.5">
+      <div className="mt-1.5 grid shrink-0 grid-cols-4 gap-1.5">
         {["Auto-Pilot", "Takeoff", "Landing", "Return"].map((a) => (
           <button key={a} className="hud-tile py-1 text-[0.58rem] uppercase tracking-widest text-cyan">
             {a}
