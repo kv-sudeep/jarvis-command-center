@@ -365,8 +365,8 @@ const COMMANDS = [
 export function VoiceCommand({ className }: { className?: string }) {
   const bars = useMemo(() => Array.from({ length: 34 }, () => 20 + Math.random() * 80), []);
   return (
-    <Panel title="Voice Command" className={className}>
-      <div className="flex h-16 items-center justify-center gap-[3px]">
+    <Panel title="Voice Command" className={className} bodyClassName="flex flex-col">
+      <div className="flex h-10 shrink-0 items-center justify-center gap-[3px]">
         {bars.map((h, i) => (
           <span
             key={i}
