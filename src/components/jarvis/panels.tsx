@@ -357,9 +357,6 @@ const COMMANDS = [
   "Play my music",
   "Run diagnostics",
   "What's the weather?",
-  "Open camera feed",
-  "Read notifications",
-  "Send message",
 ];
 
 export function VoiceCommand({ className }: { className?: string }) {
