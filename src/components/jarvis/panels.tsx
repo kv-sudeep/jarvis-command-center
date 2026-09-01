@@ -249,7 +249,7 @@ export function FlightControl({ className }: { className?: string }) {
         <div className="relative flex flex-1 items-center justify-center">
           <div className="absolute inset-2 rounded-full border border-cyan/25 animate-hud-spin-slow" />
           <div className="absolute inset-6 rounded-full border border-dashed border-cyan/20 animate-hud-spin-rev" />
-          <Rocket className="h-16 w-16 text-cyan text-glow animate-hud-pulse" />
+          <Rocket className="h-11 w-11 text-cyan text-glow animate-hud-pulse" />
         </div>
         <ul className="w-24 shrink-0 space-y-0.5">
           {systems.map((s) => (
