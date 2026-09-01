@@ -286,8 +286,8 @@ export function Dashboard() {
               <div className="flex min-h-0 flex-col gap-2.5">
                 <FlightControl className="flex-[1.1]" />
                 <DroneFleet className="flex-[1.2]" />
-                <QuickLaunch className="flex-[0.8]" />
-                <VoiceCommand className="flex-[0.9]" />
+                <QuickLaunch className="flex-[0.7]" />
+                <VoiceCommand className="flex-[1.1]" />
               </div>
             </div>
 
