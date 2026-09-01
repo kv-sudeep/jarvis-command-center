@@ -379,8 +379,8 @@ export function VoiceCommand({ className }: { className?: string }) {
           />
         ))}
       </div>
-      <div className="mt-2 flex flex-col items-center">
-        <div className="relative flex h-14 w-14 items-center justify-center rounded-full border border-cyan/40">
+      <div className="mt-1 flex shrink-0 flex-col items-center">
+        <div className="relative flex h-11 w-11 items-center justify-center rounded-full border border-cyan/40">
           <div className="absolute inset-0 animate-hud-spin rounded-full border border-dashed border-cyan/40" />
           <Mic className="h-6 w-6 text-cyan text-glow" />
         </div>
