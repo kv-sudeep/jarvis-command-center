@@ -284,10 +284,10 @@ export function Dashboard() {
               </div>
 
               <div className="flex min-h-0 flex-col gap-2.5">
-                <FlightControl className="flex-[1.1]" />
-                <DroneFleet className="flex-[1.2]" />
-                <QuickLaunch className="flex-[0.7]" />
-                <VoiceCommand className="flex-[1.1]" />
+                <FlightControl className="flex-[1.25]" />
+                <DroneFleet className="flex-[1.15]" />
+                <QuickLaunch className="flex-[0.95]" />
+                <VoiceCommand className="flex-[1]" />
               </div>
             </div>
 
