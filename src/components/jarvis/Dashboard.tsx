@@ -277,17 +277,17 @@ export function Dashboard() {
                 <AiQuickControls />
                 <CentralCore />
                 <CoreShortcuts />
-                <div className="grid h-[15rem] shrink-0 grid-cols-2 gap-2.5">
+                <div className="grid h-[16rem] shrink-0 grid-cols-2 gap-2.5">
                   <PowerCore />
                   <EnergyDistribution />
                 </div>
               </div>
 
               <div className="flex min-h-0 flex-col gap-2.5">
-                <FlightControl className="flex-[1.1]" />
-                <DroneFleet className="flex-[1.2]" />
-                <QuickLaunch className="flex-[0.8]" />
-                <VoiceCommand className="flex-[0.9]" />
+                <FlightControl className="flex-[1.45]" />
+                <DroneFleet className="flex-[1.05]" />
+                <QuickLaunch className="flex-[0.85]" />
+                <VoiceCommand className="flex-[1.15]" />
               </div>
             </div>
 

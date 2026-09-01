@@ -237,9 +237,9 @@ export function FlightControl({ className }: { className?: string }) {
     { label: "Missiles", value: "Armed" },
   ];
   return (
-    <Panel title="Flight Control" className={className}>
-      <div className="flex gap-3">
-        <div className="w-24 shrink-0 space-y-2">
+    <Panel title="Flight Control" className={className} bodyClassName="flex flex-col">
+      <div className="flex min-h-0 flex-1 gap-3">
+        <div className="w-24 shrink-0 space-y-0.5">
           <Stat label="Altitude" value="10,900 FT" />
           <Stat label="Speed" value="620 MPH" />
           <Stat label="Heading" value="270°" />
@@ -249,9 +249,9 @@ export function FlightControl({ className }: { className?: string }) {
         <div className="relative flex flex-1 items-center justify-center">
           <div className="absolute inset-2 rounded-full border border-cyan/25 animate-hud-spin-slow" />
           <div className="absolute inset-6 rounded-full border border-dashed border-cyan/20 animate-hud-spin-rev" />
-          <Rocket className="h-16 w-16 text-cyan text-glow animate-hud-pulse" />
+          <Rocket className="h-11 w-11 text-cyan text-glow animate-hud-pulse" />
         </div>
-        <ul className="w-24 shrink-0 space-y-1.5">
+        <ul className="w-24 shrink-0 space-y-0.5">
           {systems.map((s) => (
             <li key={s.label} className="hud-tile px-1.5 py-1">
               <div className="text-[0.55rem] uppercase tracking-widest text-muted-foreground">{s.label}</div>
@@ -260,15 +260,14 @@ export function FlightControl({ className }: { className?: string }) {
           ))}
         </ul>
       </div>
-      <div className="mt-2 grid grid-cols-4 gap-1.5">
+      <div className="mt-1.5 grid shrink-0 grid-cols-4 gap-1.5">
         {["Auto-Pilot", "Takeoff", "Landing", "Return"].map((a) => (
           <button key={a} className="hud-tile py-1 text-[0.58rem] uppercase tracking-widest text-cyan">
             {a}
           </button>
         ))}
       </div>
-      <div className="mt-2 text-center hud-label">Ready for takeoff</div>
-      <button className="mt-1 w-full hud-tile py-1.5 font-display text-[0.7rem] tracking-[0.3em] text-cyan text-glow">
+      <button className="mt-1.5 w-full shrink-0 hud-tile py-1 font-display text-[0.66rem] tracking-[0.3em] text-cyan text-glow">
         ENGAGE
       </button>
     </Panel>
@@ -288,9 +287,9 @@ const DRONES = [
 
 export function DroneFleet({ className }: { className?: string }) {
   return (
-    <Panel title="Drone Fleet" className={className}>
-      <div className="flex gap-3">
-        <div className="relative aspect-square flex-1">
+    <Panel title="Drone Fleet" className={className} bodyClassName="flex flex-col">
+      <div className="flex min-h-0 flex-1 gap-3 overflow-hidden">
+        <div className="relative aspect-square w-[42%] shrink-0 self-center">
           <div className="absolute inset-0 rounded-full border border-cyan/30" />
           <div className="absolute inset-[18%] rounded-full border border-cyan/25" />
           <div className="absolute inset-[36%] rounded-full border border-cyan/20" />
@@ -319,7 +318,7 @@ export function DroneFleet({ className }: { className?: string }) {
             />
           ))}
         </div>
-        <div className="w-[54%] space-y-1.5">
+        <div className="min-w-0 flex-1 space-y-1">
           <div className="hud-tile px-2 py-1">
             <div className="hud-label">Active Devices</div>
             <div className="font-mono text-lg text-online text-glow">12</div>
@@ -342,7 +341,7 @@ export function DroneFleet({ className }: { className?: string }) {
           </ul>
         </div>
       </div>
-      <div className="mt-2 text-center hud-label">
+      <div className="mt-1 shrink-0 text-center hud-label">
         Fleet status: <span className="text-online">Optimal</span>
       </div>
     </Panel>
@@ -357,16 +356,13 @@ const COMMANDS = [
   "Play my music",
   "Run diagnostics",
   "What's the weather?",
-  "Open camera feed",
-  "Read notifications",
-  "Send message",
 ];
 
 export function VoiceCommand({ className }: { className?: string }) {
   const bars = useMemo(() => Array.from({ length: 34 }, () => 20 + Math.random() * 80), []);
   return (
-    <Panel title="Voice Command" className={className}>
-      <div className="flex h-16 items-center justify-center gap-[3px]">
+    <Panel title="Voice Command" className={className} bodyClassName="flex flex-col">
+      <div className="flex h-10 shrink-0 items-center justify-center gap-[3px]">
         {bars.map((h, i) => (
           <span
             key={i}
@@ -379,18 +375,18 @@ export function VoiceCommand({ className }: { className?: string }) {
           />
         ))}
       </div>
-      <div className="mt-2 flex flex-col items-center">
-        <div className="relative flex h-14 w-14 items-center justify-center rounded-full border border-cyan/40">
+      <div className="mt-1 flex shrink-0 flex-col items-center">
+        <div className="relative flex h-11 w-11 items-center justify-center rounded-full border border-cyan/40">
           <div className="absolute inset-0 animate-hud-spin rounded-full border border-dashed border-cyan/40" />
           <Mic className="h-6 w-6 text-cyan text-glow" />
         </div>
         <div className="mt-1 hud-title animate-hud-pulse">Listening…</div>
         <div className="text-[0.7rem] italic text-muted-foreground">"How can I help you, Sir?"</div>
       </div>
-      <div className="mt-3 border-t border-border pt-2">
-        <div className="hud-label mb-1">Suggested commands</div>
-        <ul className="space-y-1">
-          {COMMANDS.map((c) => (
+      <div className="mt-1 min-h-0 flex-1 overflow-hidden border-t border-border pt-1">
+        <div className="hud-label mb-0.5">Suggested commands</div>
+        <ul className="space-y-0.5">
+          {COMMANDS.slice(0, 3).map((c) => (
             <li key={c} className="flex items-center gap-2 text-[0.7rem] text-foreground/85">
               <MessageSquare className="h-3 w-3 text-cyan" />
               {c}
@@ -422,7 +418,7 @@ const APPS = [
 export function QuickLaunch({ className }: { className?: string }) {
   return (
     <Panel title="Quick Launch" className={className}>
-      <div className="grid grid-cols-3 gap-1.5">
+      <div className="grid h-full grid-cols-4 grid-rows-3 gap-1 text-[0.5rem]">
         {APPS.map((a) => (
           <IconTile key={a.label} icon={a.icon} label={a.label} />
         ))}
@@ -447,7 +443,7 @@ export function PowerCore() {
             <Stat label="Stability" value="Stable" tone="online" />
           </div>
         </div>
-        <div className="relative flex h-24 flex-1 items-center justify-center">
+        <div className="relative flex aspect-square h-full max-h-28 items-center justify-center">
 
           <div className="absolute inset-0 rounded-full animate-hud-spin border border-cyan/30" />
           <div className="absolute inset-3 rounded-full animate-hud-spin-rev border border-dashed border-cyan/40" />
@@ -627,8 +623,8 @@ export function GlobalTracking() {
     [40, 72],
   ];
   return (
-    <Panel title="Global Tracking">
-      <div className="relative h-36 overflow-hidden rounded-sm border border-cyan/20 bg-cyan/5">
+    <Panel title="Global Tracking" bodyClassName="flex flex-col">
+      <div className="relative min-h-0 flex-1 overflow-hidden rounded-sm border border-cyan/20 bg-cyan/5">
         <div
           className="absolute inset-0 opacity-40"
           style={{
