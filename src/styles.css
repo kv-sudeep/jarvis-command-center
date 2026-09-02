@@ -108,17 +108,31 @@
   body {
     background-image:
       radial-gradient(
-        circle at 50% 45%,
-        color-mix(in oklab, var(--cyan) 12%, transparent),
-        transparent 60%
+        ellipse 70% 55% at 50% 42%,
+        color-mix(in oklab, var(--cyan) 26%, transparent),
+        transparent 70%
       ),
-      linear-gradient(color-mix(in oklab, var(--cyan) 4%, transparent) 1px, transparent 1px),
-      linear-gradient(90deg, color-mix(in oklab, var(--cyan) 4%, transparent) 1px, transparent 1px);
+      radial-gradient(
+        ellipse 60% 50% at 8% 100%,
+        color-mix(in oklab, var(--glow) 14%, transparent),
+        transparent 70%
+      ),
+      radial-gradient(
+        ellipse 60% 50% at 95% 5%,
+        color-mix(in oklab, var(--glow) 14%, transparent),
+        transparent 70%
+      ),
+      linear-gradient(color-mix(in oklab, var(--cyan) 9%, transparent) 1px, transparent 1px),
+      linear-gradient(90deg, color-mix(in oklab, var(--cyan) 9%, transparent) 1px, transparent 1px);
     background-size:
+      100% 100%,
+      100% 100%,
       100% 100%,
       44px 44px,
       44px 44px;
+    background-attachment: fixed;
   }
+
 
   ::-webkit-scrollbar {
     width: 6px;
