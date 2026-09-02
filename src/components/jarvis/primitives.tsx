@@ -8,10 +8,10 @@ export function Panel({
   bodyClassName,
   children,
 }: {
-  title?: string;
-  right?: ReactNode;
-  className?: string;
-  bodyClassName?: string;
+  title?: string | undefined;
+  right?: ReactNode | undefined;
+  className?: string | undefined;
+  bodyClassName?: string | undefined;
   children: ReactNode;
 }) {
   return (
@@ -126,7 +126,7 @@ export function IconTile({
   );
 }
 
-export function Sparkline({ points, className }: { points: number[]; className?: string }) {
+export function Sparkline({ points, className }: { points: number[]; className?: string | undefined }) {
   const max = Math.max(...points, 1);
   const path = points
     .map((p, i) => `${(i / (points.length - 1)) * 100},${40 - (p / max) * 38}`)
