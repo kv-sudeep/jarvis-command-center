@@ -49,45 +49,49 @@
 
 :root {
   --radius: 0.25rem;
-  --background: oklch(0.16 0.035 250);
-  --foreground: oklch(0.95 0.02 220);
-  --panel: oklch(0.22 0.045 250 / 55%);
-  --card: oklch(0.22 0.045 250 / 55%);
-  --card-foreground: oklch(0.95 0.02 220);
-  --popover: oklch(0.2 0.04 250);
-  --popover-foreground: oklch(0.95 0.02 220);
-  --primary: oklch(0.75 0.15 225);
-  --primary-foreground: oklch(0.16 0.035 250);
-  --secondary: oklch(0.3 0.06 250);
-  --secondary-foreground: oklch(0.95 0.02 220);
-  --muted: oklch(0.28 0.05 250);
-  --muted-foreground: oklch(0.7 0.05 230);
-  --accent: oklch(0.68 0.16 230);
-  --accent-foreground: oklch(0.16 0.035 250);
-  --destructive: oklch(0.65 0.22 25);
-  --destructive-foreground: oklch(0.97 0.01 240);
-  --border: oklch(0.6 0.12 230 / 30%);
-  --input: oklch(0.6 0.12 230 / 30%);
-  --ring: oklch(0.75 0.15 225);
-  --cyan: oklch(0.8 0.14 210);
-  --cyan-dim: oklch(0.62 0.1 225);
-  --glow: oklch(0.85 0.16 205);
-  --online: oklch(0.82 0.19 155);
-  --warn: oklch(0.8 0.17 80);
+  --background: oklch(0.19 0.055 245);
+  --foreground: oklch(0.97 0.02 210);
+  --panel: oklch(0.28 0.075 240 / 62%);
+  --card: oklch(0.28 0.075 240 / 62%);
+  --card-foreground: oklch(0.97 0.02 210);
+  --popover: oklch(0.24 0.06 245);
+  --popover-foreground: oklch(0.97 0.02 210);
+  --primary: oklch(0.82 0.16 215);
+  --primary-foreground: oklch(0.17 0.045 250);
+  --secondary: oklch(0.34 0.08 245);
+  --secondary-foreground: oklch(0.97 0.02 210);
+  --muted: oklch(0.32 0.07 245);
+  --muted-foreground: oklch(0.78 0.08 215);
+  --accent: oklch(0.74 0.18 220);
+  --accent-foreground: oklch(0.17 0.045 250);
+  --destructive: oklch(0.68 0.24 25);
+  --destructive-foreground: oklch(0.98 0.01 240);
+  --border: oklch(0.72 0.15 215 / 45%);
+  --input: oklch(0.72 0.15 215 / 45%);
+  --ring: oklch(0.82 0.16 215);
+  --cyan: oklch(0.86 0.16 205);
+  --cyan-dim: oklch(0.68 0.13 220);
+  --glow: oklch(0.92 0.18 200);
+  --online: oklch(0.85 0.21 155);
+  --warn: oklch(0.85 0.19 80);
 
   --gradient-panel: linear-gradient(
-    160deg,
-    color-mix(in oklab, var(--cyan) 10%, transparent),
-    color-mix(in oklab, var(--background) 92%, transparent)
+    155deg,
+    color-mix(in oklab, var(--cyan) 20%, transparent),
+    color-mix(in oklab, var(--background) 88%, transparent) 45%,
+    color-mix(in oklab, var(--cyan) 10%, transparent)
   );
   --gradient-core: radial-gradient(
     circle at 50% 50%,
-    color-mix(in oklab, var(--glow) 45%, transparent),
+    color-mix(in oklab, var(--glow) 60%, transparent),
     transparent 70%
   );
-  --shadow-hud: 0 0 24px -6px color-mix(in oklab, var(--cyan) 55%, transparent);
-  --shadow-glow: 0 0 12px color-mix(in oklab, var(--glow) 60%, transparent);
+  --shadow-hud:
+    0 0 32px -8px color-mix(in oklab, var(--cyan) 85%, transparent),
+    inset 0 0 24px -14px color-mix(in oklab, var(--glow) 90%, transparent);
+  --shadow-glow: 0 0 14px color-mix(in oklab, var(--glow) 75%, transparent);
 }
+
 
 @layer base {
   * {
