@@ -14,7 +14,105 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      jarvis_memories: {
+        Row: {
+          content: string
+          created_at: string
+          device_id: string
+          id: string
+          scope: string
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          device_id: string
+          id?: string
+          scope?: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          device_id?: string
+          id?: string
+          scope?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      jarvis_messages: {
+        Row: {
+          content: string
+          created_at: string
+          device_id: string
+          id: string
+          role: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          device_id: string
+          id?: string
+          role: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          device_id?: string
+          id?: string
+          role?: string
+        }
+        Relationships: []
+      }
+      jarvis_settings: {
+        Row: {
+          created_at: string
+          device_id: string
+          language: string
+          memory_enabled: boolean
+          personality: string
+          pitch: number
+          rate: number
+          sensitivity: number
+          tts_enabled: boolean
+          updated_at: string
+          verbosity: string
+          voice_name: string | null
+          wake_word: string
+        }
+        Insert: {
+          created_at?: string
+          device_id: string
+          language?: string
+          memory_enabled?: boolean
+          personality?: string
+          pitch?: number
+          rate?: number
+          sensitivity?: number
+          tts_enabled?: boolean
+          updated_at?: string
+          verbosity?: string
+          voice_name?: string | null
+          wake_word?: string
+        }
+        Update: {
+          created_at?: string
+          device_id?: string
+          language?: string
+          memory_enabled?: boolean
+          personality?: string
+          pitch?: number
+          rate?: number
+          sensitivity?: number
+          tts_enabled?: boolean
+          updated_at?: string
+          verbosity?: string
+          voice_name?: string | null
+          wake_word?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
