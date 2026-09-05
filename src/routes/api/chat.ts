@@ -108,6 +108,7 @@ export const Route = createFileRoute("/api/chat")({
             input,
             stream: true,
             store: false,
+            reasoning: { effort: "low", summary: "auto" },
           }),
         });
 
