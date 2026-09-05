@@ -26,6 +26,7 @@ import {
   Workflow,
 } from "lucide-react";
 import { CoreCanvas } from "./CoreCanvas";
+import { JarvisConsole } from "./JarvisConsole";
 import { FitScreen } from "./FitScreen";
 import {
   AiQuickControls,
@@ -92,7 +93,7 @@ function Clock() {
   );
 }
 
-function Header() {
+function Header({ onOpenConsole, listening }: { onOpenConsole: () => void; listening: boolean }) {
   return (
     <header className="flex items-center gap-3 px-3 py-2">
       <div className="relative flex h-14 w-14 shrink-0 items-center justify-center">
@@ -151,10 +152,17 @@ function Header() {
         ].map((b) => (
           <button
             key={b.label}
+            onClick={b.label === "Voice" || b.label === "AI" ? onOpenConsole : undefined}
             className="hud-tile relative flex h-9 w-9 items-center justify-center"
             aria-label={b.label}
           >
-            <b.icon className="h-4 w-4 text-cyan" />
+            <b.icon
+              className={
+                b.label === "Voice" && listening
+                  ? "h-4 w-4 animate-hud-pulse text-online"
+                  : "h-4 w-4 text-cyan"
+              }
+            />
             {b.badge ? (
               <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-destructive font-mono text-[0.55rem] text-destructive-foreground">
                 {b.badge}
@@ -204,12 +212,14 @@ function SideNav() {
 
 const STATES = ["Idle", "Listening", "Thinking", "Processing", "Speaking", "Executing"] as const;
 
-function CentralCore() {
+function CentralCore({ state }: { state: string | null }) {
   const [stateIndex, setStateIndex] = useState(1);
   useEffect(() => {
+    if (state) return;
     const id = setInterval(() => setStateIndex((i) => (i + 1) % STATES.length), 4200);
     return () => clearInterval(id);
-  }, []);
+  }, [state]);
+  const label = state ?? STATES[stateIndex];
 
   return (
     <div className="relative min-h-0 flex-1">
@@ -225,7 +235,7 @@ function CentralCore() {
           </div>
           <div className="mt-1 font-display text-sm tracking-[0.4em] text-cyan text-glow">ONLINE</div>
           <div className="mt-2 hud-label">
-            Neural net · <span className="text-cyan">{STATES[stateIndex]}</span>
+            Neural net · <span className="text-cyan">{label}</span>
           </div>
         </div>
       </div>
@@ -258,10 +268,14 @@ function Dock() {
 }
 
 export function Dashboard() {
+  const [consoleOpen, setConsoleOpen] = useState(false);
+  const [wakeEnabled, setWakeEnabled] = useState(false);
+  const [coreState, setCoreState] = useState<string | null>(null);
+
   return (
     <FitScreen>
       <div className="flex h-full w-full flex-col overflow-hidden">
-        <Header />
+        <Header onOpenConsole={() => setConsoleOpen(true)} listening={coreState === "Listening"} />
         <main className="flex min-h-0 flex-1 gap-2.5 px-3">
           <SideNav />
 
@@ -275,7 +289,7 @@ export function Dashboard() {
 
               <div className="flex min-h-0 min-w-0 flex-col gap-2.5">
                 <AiQuickControls />
-                <CentralCore />
+                <CentralCore state={coreState} />
                 <CoreShortcuts />
                 <div className="grid h-[16rem] shrink-0 grid-cols-2 gap-2.5">
                   <PowerCore />
@@ -287,7 +301,7 @@ export function Dashboard() {
                 <FlightControl className="flex-[1.45]" />
                 <DroneFleet className="flex-[1.05]" />
                 <QuickLaunch className="flex-[0.85]" />
-                <VoiceCommand className="flex-[1.15]" />
+                <VoiceCommand className="flex-[1.15]" onOpen={() => setConsoleOpen(true)} state={coreState} />
               </div>
             </div>
 
@@ -307,6 +321,13 @@ export function Dashboard() {
           </div>
         </main>
         <Dock />
+        <JarvisConsole
+          open={consoleOpen}
+          onClose={() => setConsoleOpen(false)}
+          wakeEnabled={wakeEnabled}
+          onWakeEnabledChange={setWakeEnabled}
+          onStateChange={(next) => setCoreState(next === "Idle" ? null : next)}
+        />
         <div className="pointer-events-none absolute bottom-2 right-3 flex items-center gap-2 font-mono text-[0.55rem] text-cyan/60">
           <LayoutGrid className="h-3 w-3" />
           <GaugeIcon className="h-3 w-3" />

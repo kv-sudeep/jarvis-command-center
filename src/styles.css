@@ -205,8 +205,30 @@
 @utility text-glow {
   text-shadow: var(--shadow-glow);
 }
+@utility hud-select {
+  width: 100%;
+  background: color-mix(in oklab, var(--cyan) 8%, var(--color-card));
+  border: 1px solid color-mix(in oklab, var(--cyan) 28%, transparent);
+  border-radius: var(--radius);
+  color: var(--color-foreground);
+  font-family: var(--font-mono, monospace);
+  font-size: 0.7rem;
+  padding: 0.3rem 0.4rem;
+  outline: none;
+
+  &:focus {
+    border-color: color-mix(in oklab, var(--glow) 70%, transparent);
+    box-shadow: var(--shadow-glow);
+  }
+
+  & option {
+    background: var(--color-card);
+    color: var(--color-foreground);
+  }
+}
 
 @utility hud-tile {
+
   background: color-mix(in oklab, var(--cyan) 8%, transparent);
   border: 1px solid color-mix(in oklab, var(--cyan) 22%, transparent);
   border-radius: var(--radius);

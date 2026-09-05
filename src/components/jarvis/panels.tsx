@@ -358,7 +358,15 @@ const COMMANDS = [
   "What's the weather?",
 ];
 
-export function VoiceCommand({ className }: { className?: string }) {
+export function VoiceCommand({
+  className,
+  onOpen,
+  state,
+}: {
+  className?: string;
+  onOpen?: () => void;
+  state?: string | null;
+}) {
   const bars = useMemo(() => Array.from({ length: 34 }, () => 20 + Math.random() * 80), []);
   return (
     <Panel title="Voice Command" className={className} bodyClassName="flex flex-col">
@@ -375,14 +383,19 @@ export function VoiceCommand({ className }: { className?: string }) {
           />
         ))}
       </div>
-      <div className="mt-1 flex shrink-0 flex-col items-center">
+      <button
+        type="button"
+        onClick={onOpen}
+        className="mt-1 flex shrink-0 flex-col items-center"
+      >
         <div className="relative flex h-11 w-11 items-center justify-center rounded-full border border-cyan/40">
           <div className="absolute inset-0 animate-hud-spin rounded-full border border-dashed border-cyan/40" />
           <Mic className="h-6 w-6 text-cyan text-glow" />
         </div>
-        <div className="mt-1 hud-title animate-hud-pulse">Listening…</div>
+        <div className="mt-1 hud-title animate-hud-pulse">{state ?? "Tap to talk"}</div>
         <div className="text-[0.7rem] italic text-muted-foreground">"How can I help you, Sir?"</div>
-      </div>
+      </button>
+
       <div className="mt-1 min-h-0 flex-1 overflow-hidden border-t border-border pt-1">
         <div className="hud-label mb-0.5">Suggested commands</div>
         <ul className="space-y-0.5">

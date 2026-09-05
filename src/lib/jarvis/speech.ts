@@ -44,7 +44,7 @@ export type DictationHandlers = {
   onFinal: (text: string) => void;
   onError?: (error: string) => void;
   onEnd?: () => void;
-  lang?: string;
+  lang?: string | undefined;
 };
 
 /** One-shot dictation: listens until the speaker finishes a phrase. */

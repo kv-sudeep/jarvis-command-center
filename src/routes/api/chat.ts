@@ -108,6 +108,7 @@ export const Route = createFileRoute("/api/chat")({
             input,
             stream: true,
             store: false,
+            reasoning: { effort: "low", summary: "auto" },
           }),
         });
 
@@ -120,38 +121,31 @@ export const Route = createFileRoute("/api/chat")({
 
         const decoder = new TextDecoder();
         const encoder = new TextEncoder();
-        const reader = upstream.body.getReader();
         let buffer = "";
 
-        const stream = new ReadableStream<Uint8Array>({
-          async pull(controller) {
-            const { done, value } = await reader.read();
-            if (done) {
-              controller.close();
-              return;
-            }
-            buffer += decoder.decode(value, { stream: true });
-            const lines = buffer.split("\n");
-            buffer = lines.pop() ?? "";
-            for (const line of lines) {
-              const trimmed = line.trim();
-              if (!trimmed.startsWith("data:")) continue;
-              const payload = trimmed.slice(5).trim();
-              if (!payload || payload === "[DONE]") continue;
-              try {
-                const event = JSON.parse(payload) as { type?: string; delta?: string };
-                if (event.type === "response.output_text.delta" && event.delta) {
-                  controller.enqueue(encoder.encode(event.delta));
+        const stream = upstream.body.pipeThrough(
+          new TransformStream<Uint8Array, Uint8Array>({
+            transform(chunk, controller) {
+              buffer += decoder.decode(chunk, { stream: true });
+              const lines = buffer.split("\n");
+              buffer = lines.pop() ?? "";
+              for (const line of lines) {
+                const trimmed = line.trim();
+                if (!trimmed.startsWith("data:")) continue;
+                const payload = trimmed.slice(5).trim();
+                if (!payload || payload === "[DONE]") continue;
+                try {
+                  const event = JSON.parse(payload) as { type?: string; delta?: string };
+                  if (event.type === "response.output_text.delta" && event.delta) {
+                    controller.enqueue(encoder.encode(event.delta));
+                  }
+                } catch {
+                  /* ignore partial frames */
                 }
-              } catch {
-                /* ignore partial frames */
               }
-            }
-          },
-          cancel(reason) {
-            return reader.cancel(reason);
-          },
-        });
+            },
+          }),
+        );
 
         return new Response(stream, {
           headers: {
