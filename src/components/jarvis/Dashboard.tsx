@@ -136,7 +136,9 @@ function Header({
         </div>
         <div>
           <div className="hud-title">System Status</div>
-          <div className="font-mono text-[0.65rem] text-online">Online · Fully Operational</div>
+          <div className="font-mono text-[0.65rem] text-online">
+            {state ? `Online · ${state}` : "Online · Fully Operational"}
+          </div>
         </div>
       </div>
 
