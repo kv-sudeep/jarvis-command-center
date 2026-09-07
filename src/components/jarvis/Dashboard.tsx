@@ -93,7 +93,15 @@ function Clock() {
   );
 }
 
-function Header({ onOpenConsole, listening }: { onOpenConsole: () => void; listening: boolean }) {
+function Header({
+  onOpenConsole,
+  listening,
+  state,
+}: {
+  onOpenConsole: () => void;
+  listening: boolean;
+  state: string | null;
+}) {
   return (
     <header className="flex items-center gap-3 px-3 py-2">
       <div className="relative flex h-14 w-14 shrink-0 items-center justify-center">
