@@ -321,6 +321,171 @@ export function JarvisConsole({
     setState("Idle");
   }, [partial, setState]);
 
+  /** One-shot model call that does not touch the conversation thread. */
+  const askOnce = useCallback(
+    async (prompt: string, verbosity = "short"): Promise<string> => {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: [{ role: "user", content: prompt }],
+          personality: settingsRef.current.personality,
+          verbosity,
+          language: settingsRef.current.language,
+        }),
+      });
+      if (!response.ok || !response.body) {
+        throw new Error((await response.text().catch(() => "")) || "Neural core unavailable");
+      }
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let acc = "";
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        acc += decoder.decode(value, { stream: true });
+      }
+      return acc.replace(MEMORY_RE, "").trim();
+    },
+    [],
+  );
+
+  const addReminder = useCallback(
+    (reminder: Reminder) => {
+      const next = { ...prefsRef.current, reminders: [...prefsRef.current.reminders, reminder] };
+      savePrefs(next);
+      const when = new Date(reminder.dueAt).toLocaleTimeString();
+      setNotice(`Reminder set for ${when}: ${reminder.text}`);
+      say(`Reminder set for ${when}.`);
+    },
+    [savePrefs, say],
+  );
+
+  const runMacro = useCallback(
+    async (steps: string[]) => {
+      for (const step of steps) {
+        await send(step);
+      }
+    },
+    [send],
+  );
+
+  /** Central voice router: authentication, shortcuts, macros, modes, reminders, search. */
+  const handleVoiceInput = useCallback(
+    (text: string) => {
+      const p = prefsRef.current;
+      setNotice(null);
+
+      if (p.authRequired && !authOk) {
+        if (passphraseMatches(text, p.passphrase)) {
+          setAuthOk(true);
+          setNotice("Voice signature accepted. Welcome back.");
+          say("Voice signature accepted.");
+        } else {
+          setNotice("Voice authentication required — speak your passphrase.");
+          say("Voice authentication required.");
+        }
+        return;
+      }
+
+      const command = routeVoiceInput(text, p);
+      if (command?.kind === "stop") {
+        interrupt();
+        return;
+      }
+      if (command?.kind === "clear") {
+        void clearMessages(deviceId);
+        setMessages([]);
+        setNotice("Conversation cleared.");
+        return;
+      }
+      if (command?.kind === "mode") {
+        savePrefs({ ...p, mode: command.mode });
+        setNotice(`Speaking mode: ${command.mode}.`);
+        say(`${command.mode} mode engaged.`);
+        return;
+      }
+      if (command?.kind === "reminder") {
+        addReminder(command.reminder);
+        return;
+      }
+      if (command?.kind === "macro") {
+        setNotice(`Macro “${command.label}” running · ${command.steps.length} steps`);
+        void runMacro(command.steps);
+        return;
+      }
+      if (command?.kind === "prompt") {
+        setNotice(`Shortcut “${command.label}”`);
+        void send(command.prompt);
+        return;
+      }
+      if (command?.kind === "search") {
+        void send(`Voice search: ${command.query}. Answer directly and concisely.`);
+        return;
+      }
+      void send(text);
+    },
+    [addReminder, authOk, deviceId, interrupt, runMacro, savePrefs, say, send],
+  );
+
+  /* Smart reminders: fire when due, speak them, keep them listed. */
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      const p = prefsRef.current;
+      const due = p.reminders.filter((r) => !r.done && r.dueAt <= Date.now());
+      if (due.length === 0) return;
+      savePrefs({
+        ...p,
+        reminders: p.reminders.map((r) => (due.some((d) => d.id === r.id) ? { ...r, done: true } : r)),
+      });
+      const first = due[0];
+      if (first) {
+        setNotice(`Reminder: ${first.text}`);
+        say(`Reminder. ${first.text}`);
+      }
+    }, 5000);
+    return () => window.clearInterval(timer);
+  }, [savePrefs, say]);
+
+  /* Meeting assistant + live translation share one continuous capture stream. */
+  useEffect(() => {
+    if (!meetingOn && !translateOn) {
+      stopCaptureRef.current?.();
+      stopCaptureRef.current = null;
+      return;
+    }
+    if (stopCaptureRef.current) return;
+    const stop = startContinuous({
+      lang: settingsRef.current.language === "auto" ? "en-US" : undefined,
+      onFinal: (text) => {
+        if (meetingOn) setMeetingLines((prev) => [...prev, text]);
+        if (translateOn) {
+          void askOnce(
+            `Translate the following into ${prefsRef.current.translateTo}. Reply with the translation only, no commentary:\n\n${text}`,
+          )
+            .then((out) => {
+              if (!out) return;
+              setTranslations((prev) => [...prev.slice(-30), { src: text, out }]);
+              say(out);
+            })
+            .catch(() => setError("Translation failed."));
+        }
+      },
+      onError: (err) => setError(`Microphone: ${err}`),
+    });
+    if (!stop) {
+      setError("Continuous listening needs Chrome or Edge microphone access.");
+      setMeetingOn(false);
+      setTranslateOn(false);
+      return;
+    }
+    stopCaptureRef.current = stop;
+    return () => {
+      stop();
+      stopCaptureRef.current = null;
+    };
+  }, [askOnce, meetingOn, translateOn, say]);
+
   const toggleDictation = useCallback(() => {
     if (listening) {
       stopDictationRef.current?.();
