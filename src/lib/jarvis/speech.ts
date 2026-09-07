@@ -151,7 +151,13 @@ export function listVoices(): SpeechSynthesisVoice[] {
 
 export function speak(
   text: string,
-  options: { voiceName?: string | null; rate?: number; pitch?: number },
+  options: {
+    voiceName?: string | null;
+    rate?: number;
+    pitch?: number;
+    volume?: number;
+    lang?: string | undefined;
+  },
 ): void {
   if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
   const clean = text.replace(/<<MEMORY:[^>]*>>/g, "").replace(/[*_`#]/g, "").trim();
@@ -162,9 +168,74 @@ export function speak(
     ? listVoices().find((v) => v.name === options.voiceName)
     : undefined;
   if (voice) utterance.voice = voice;
+  if (options.lang) utterance.lang = options.lang;
   utterance.rate = options.rate ?? 1;
   utterance.pitch = options.pitch ?? 0.9;
+  utterance.volume = options.volume ?? 1;
   window.speechSynthesis.speak(utterance);
+}
+
+/** Continuous transcription (meeting capture, live translation, voice typing). */
+export function startContinuous(handlers: {
+  onPartial?: (text: string) => void;
+  onFinal: (text: string) => void;
+  onError?: (error: string) => void;
+  lang?: string | undefined;
+}): (() => void) | null {
+  const Ctor = getRecognitionCtor();
+  if (!Ctor) return null;
+  const rec = new Ctor();
+  rec.lang = handlers.lang ?? "en-US";
+  rec.continuous = true;
+  rec.interimResults = true;
+  rec.maxAlternatives = 1;
+  let stopped = false;
+
+  rec.onresult = (event) => {
+    let interim = "";
+    for (let i = event.resultIndex; i < event.results.length; i += 1) {
+      const result = event.results[i];
+      const alt = result?.[0];
+      if (!result || !alt) continue;
+      if (result.isFinal) {
+        const text = alt.transcript.trim();
+        if (text) handlers.onFinal(text);
+      } else {
+        interim += alt.transcript;
+      }
+    }
+    if (interim) handlers.onPartial?.(interim.trim());
+  };
+  rec.onerror = (event) => {
+    if (event.error !== "no-speech" && event.error !== "aborted") {
+      handlers.onError?.(event.error);
+    }
+  };
+  rec.onend = () => {
+    if (stopped) return;
+    setTimeout(() => {
+      if (stopped) return;
+      try {
+        rec.start();
+      } catch {
+        /* restart race */
+      }
+    }, 300);
+  };
+
+  try {
+    rec.start();
+  } catch {
+    return null;
+  }
+  return () => {
+    stopped = true;
+    try {
+      rec.abort();
+    } catch {
+      /* already stopped */
+    }
+  };
 }
 
 export function stopSpeaking(): void {
