@@ -192,8 +192,22 @@ export function JarvisConsole({
       memory_writes: settings.memory_enabled ? "enabled" : "disabled",
       local_time: new Date().toLocaleString(),
       network: typeof navigator !== "undefined" && navigator.onLine ? "online mode" : "offline mode",
+      ...(prefs.nickname
+        ? { address_user_as: `${prefs.nickname} — always address the user by this nickname` }
+        : {}),
+      speaking_mode: prefs.mode,
+      pending_reminders: String(prefs.reminders.filter((r) => !r.done).length),
     });
-  }, [tab, wakeEnabled, settings.tts_enabled, settings.memory_enabled, open]);
+  }, [
+    tab,
+    wakeEnabled,
+    settings.tts_enabled,
+    settings.memory_enabled,
+    open,
+    prefs.nickname,
+    prefs.mode,
+    prefs.reminders,
+  ]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
