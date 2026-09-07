@@ -1,17 +1,24 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
+  BellRing,
   Brain,
   Ear,
+  Fingerprint,
+  Languages,
   Loader2,
   Mic,
   MicOff,
+  Radio,
+  Search,
   Send,
   Settings2,
   Square,
   Trash2,
   Volume2,
   VolumeX,
+  Wand2,
   X,
+  Zap,
 } from "lucide-react";
 import {
   DEFAULT_SETTINGS,
@@ -31,11 +38,25 @@ import {
   type MemoryScope,
 } from "@/lib/jarvis/cloud";
 import {
+  DEFAULT_VOICE_PREFS,
+  loadVoicePrefs,
+  modeToVoice,
+  newId,
+  parseReminder,
+  passphraseMatches,
+  routeVoiceInput,
+  saveVoicePrefs,
+  type Reminder,
+  type SpeakingMode,
+  type VoicePrefs,
+} from "@/lib/jarvis/voice-features";
+import {
   getRecognitionCtor,
   listVoices,
   matchesWakeWord,
   speak,
   speechSupported,
+  startContinuous,
   startDictation,
   stopSpeaking,
 } from "@/lib/jarvis/speech";
