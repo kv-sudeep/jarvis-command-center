@@ -273,13 +273,7 @@ export function JarvisConsole({
         if (reply) {
           setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
           void saveMessage(deviceId, "assistant", reply).catch(() => {});
-          if (settingsRef.current.tts_enabled) {
-            speak(reply, {
-              voiceName: settingsRef.current.voice_name,
-              rate: settingsRef.current.rate,
-              pitch: settingsRef.current.pitch,
-            });
-          }
+          if (settingsRef.current.tts_enabled) say(reply);
         }
         if (directive && settingsRef.current.memory_enabled) {
           const scope = (directive[1] ?? "long_term").toLowerCase() as MemoryScope;
