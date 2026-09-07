@@ -114,11 +114,39 @@ export function JarvisConsole({
   const [newMemory, setNewMemory] = useState("");
   const [context, setContext] = useState<Record<string, string>>({});
 
+  const [prefs, setPrefs] = useState<VoicePrefs>(DEFAULT_VOICE_PREFS);
+  const [authOk, setAuthOk] = useState(false);
+  const [notice, setNotice] = useState<string | null>(null);
+  const [meetingOn, setMeetingOn] = useState(false);
+  const [meetingLines, setMeetingLines] = useState<string[]>([]);
+  const [translateOn, setTranslateOn] = useState(false);
+  const [translations, setTranslations] = useState<{ src: string; out: string }[]>([]);
+  const [typingOn, setTypingOn] = useState(false);
+  const [busyTask, setBusyTask] = useState<string | null>(null);
+
   const abortRef = useRef<AbortController | null>(null);
   const stopDictationRef = useRef<(() => void) | null>(null);
+  const stopCaptureRef = useRef<(() => void) | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const settingsRef = useRef(settings);
   settingsRef.current = settings;
+  const prefsRef = useRef(prefs);
+  prefsRef.current = prefs;
+
+  const savePrefs = useCallback((next: VoicePrefs) => {
+    setPrefs(next);
+    saveVoicePrefs(next);
+  }, []);
+
+  const say = useCallback((text: string, lang?: string) => {
+    const s = settingsRef.current;
+    const tuned = modeToVoice(prefsRef.current.mode, s.rate, s.pitch);
+    speak(text, { voiceName: s.voice_name, lang, ...tuned });
+  }, []);
+
+  useEffect(() => {
+    setPrefs(loadVoicePrefs());
+  }, []);
 
   const setState = useCallback(
     (state: string) => onStateChange?.(state),
