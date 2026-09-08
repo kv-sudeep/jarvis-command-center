@@ -101,7 +101,7 @@ export function JarvisConsole({
   onStateChange?: (state: string) => void;
 }) {
   const deviceId = useMemo(() => getDeviceId(), []);
-  const [tab, setTab] = useState<"chat" | "memory" | "profile">("chat");
+  const [tab, setTab] = useState<"chat" | "memory" | "voice" | "profile">("chat");
   const [messages, setMessages] = useState<Turn[]>([]);
   const [memories, setMemories] = useState<JarvisMemory[]>([]);
   const [settings, setSettings] = useState<JarvisSettings>(DEFAULT_SETTINGS);
@@ -486,6 +486,22 @@ export function JarvisConsole({
     };
   }, [askOnce, meetingOn, translateOn, say]);
 
+  /* Voice typing: continuous transcription straight into the composer. */
+  useEffect(() => {
+    if (!typingOn) return;
+    const stop = startContinuous({
+      onPartial: (text) => setInput(text),
+      onFinal: (text) => setInput((prev) => `${prev ? `${prev} ` : ""}${text}`.trim()),
+      onError: (err) => setError(`Microphone: ${err}`),
+    });
+    if (!stop) {
+      setError("Voice typing needs Chrome or Edge microphone access.");
+      setTypingOn(false);
+      return;
+    }
+    return () => stop();
+  }, [typingOn]);
+
   const toggleDictation = useCallback(() => {
     if (listening) {
       stopDictationRef.current?.();
@@ -505,7 +521,8 @@ export function JarvisConsole({
       onPartial: (text) => setInput(text),
       onFinal: (text) => {
         setListening(false);
-        void send(text);
+        setInput("");
+        handleVoiceInput(text);
       },
       onError: (err) => {
         setListening(false);
@@ -519,7 +536,7 @@ export function JarvisConsole({
     }
     stopDictationRef.current = stop;
     setListening(true);
-  }, [listening, send, setState, settings.language]);
+  }, [handleVoiceInput, listening, setState, settings.language]);
 
   /* Always-on local wake-word loop. Audio never leaves the wake-word pipeline
      until the phrase is matched in-browser. */
@@ -542,15 +559,26 @@ export function JarvisConsole({
         for (let i = event.resultIndex; i < event.results.length; i += 1) {
           const alt = event.results[i]?.[0];
           if (!alt) continue;
-          const { hit, remainder } = matchesWakeWord(
-            alt.transcript,
+          const phrases = [
             settingsRef.current.wake_word,
-            settingsRef.current.sensitivity,
-          );
-          if (!hit) continue;
+            ...prefsRef.current.wakeWords,
+          ].filter(Boolean);
+          let match: { hit: boolean; remainder: string } = { hit: false, remainder: "" };
+          for (const phrase of phrases) {
+            const attempt = matchesWakeWord(
+              alt.transcript,
+              phrase,
+              settingsRef.current.sensitivity,
+            );
+            if (attempt.hit) {
+              match = attempt;
+              break;
+            }
+          }
+          if (!match.hit) continue;
           setState("Listening");
-          if (remainder.length > 2) {
-            void send(remainder);
+          if (match.remainder.length > 2) {
+            handleVoiceInput(match.remainder);
           } else {
             setInput("");
             setTimeout(() => toggleDictation(), 120);
