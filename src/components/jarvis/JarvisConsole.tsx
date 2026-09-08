@@ -638,6 +638,7 @@ export function JarvisConsole({
               [
                 ["chat", "Conversation"],
                 ["memory", "Memory"],
+                ["voice", "Voice"],
                 ["profile", "Personality"],
               ] as const
             ).map(([key, label]) => (
@@ -691,6 +692,402 @@ export function JarvisConsole({
             {error}
           </div>
         ) : null}
+
+        {notice ? (
+          <div className="mb-2 flex items-center gap-2 rounded-sm border border-cyan/50 bg-cyan/10 px-2 py-1 font-mono text-[0.65rem] text-cyan">
+            <BellRing className="h-3 w-3" />
+            {notice}
+            <button onClick={() => setNotice(null)} className="ml-auto" aria-label="Dismiss">
+              <X className="h-3 w-3" />
+            </button>
+          </div>
+        ) : null}
+
+        {tab === "voice" ? (
+          <div className="grid min-h-0 flex-1 grid-cols-3 gap-3 overflow-y-auto pr-1">
+            <div className="space-y-2">
+              <div className="hud-title flex items-center gap-1">
+                <Radio className="h-3.5 w-3.5" /> Voice control
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {(["normal", "whisper", "loud"] as SpeakingMode[]).map((m) => (
+                  <button
+                    key={m}
+                    onClick={() => savePrefs({ ...prefs, mode: m })}
+                    className={cn(
+                      "hud-tile px-2 py-1 text-[0.6rem] uppercase tracking-widest",
+                      prefs.mode === m ? "text-online" : "text-muted-foreground",
+                    )}
+                  >
+                    {m}
+                  </button>
+                ))}
+              </div>
+              <Field label="Call me by (nickname)">
+                <input
+                  value={prefs.nickname}
+                  onChange={(e) => savePrefs({ ...prefs, nickname: e.target.value })}
+                  placeholder="Sir"
+                  className="hud-select"
+                />
+              </Field>
+              <Field label="Wake words (comma separated)">
+                <input
+                  value={prefs.wakeWords.join(", ")}
+                  onChange={(e) =>
+                    savePrefs({
+                      ...prefs,
+                      wakeWords: e.target.value
+                        .split(",")
+                        .map((w) => w.trim())
+                        .filter(Boolean),
+                    })
+                  }
+                  className="hud-select"
+                />
+              </Field>
+              <div className="flex flex-wrap gap-1.5">
+                <button
+                  onClick={toggleDictation}
+                  className={cn(
+                    "hud-tile flex items-center gap-1 px-2 py-1 text-[0.6rem] uppercase tracking-widest",
+                    listening ? "text-online" : "text-cyan",
+                  )}
+                >
+                  <Mic className="h-3 w-3" /> {listening ? "Listening" : "Dictate"}
+                </button>
+                <button
+                  onClick={() => setTypingOn((v) => !v)}
+                  className={cn(
+                    "hud-tile flex items-center gap-1 px-2 py-1 text-[0.6rem] uppercase tracking-widest",
+                    typingOn ? "text-online" : "text-cyan",
+                  )}
+                >
+                  <Wand2 className="h-3 w-3" /> Voice typing
+                </button>
+                <button
+                  onClick={interrupt}
+                  className="hud-tile flex items-center gap-1 px-2 py-1 text-[0.6rem] uppercase tracking-widest text-warn"
+                >
+                  <Square className="h-3 w-3" /> Interrupt
+                </button>
+                <button
+                  onClick={() => onWakeEnabledChange(!wakeEnabled)}
+                  className={cn(
+                    "hud-tile flex items-center gap-1 px-2 py-1 text-[0.6rem] uppercase tracking-widest",
+                    wakeEnabled ? "text-online" : "text-muted-foreground",
+                  )}
+                >
+                  <Ear className="h-3 w-3" /> Background listening
+                </button>
+              </div>
+
+              <div className="hud-title flex items-center gap-1 pt-1">
+                <Fingerprint className="h-3.5 w-3.5" /> Voice authentication
+              </div>
+              <Field label="Passphrase">
+                <input
+                  value={prefs.passphrase ?? ""}
+                  onChange={(e) => savePrefs({ ...prefs, passphrase: e.target.value || null })}
+                  placeholder="open sesame protocol"
+                  className="hud-select"
+                />
+              </Field>
+              <button
+                onClick={() => {
+                  savePrefs({ ...prefs, authRequired: !prefs.authRequired });
+                  setAuthOk(false);
+                }}
+                className={cn(
+                  "hud-tile px-2 py-1 text-[0.6rem] uppercase tracking-widest",
+                  prefs.authRequired ? "text-online" : "text-muted-foreground",
+                )}
+              >
+                {prefs.authRequired
+                  ? authOk
+                    ? "Auth required · unlocked"
+                    : "Auth required · locked"
+                  : "Auth off"}
+              </button>
+            </div>
+
+            <div className="space-y-2">
+              <div className="hud-title flex items-center gap-1">
+                <Zap className="h-3.5 w-3.5" /> Shortcuts
+              </div>
+              {prefs.shortcuts.map((s) => (
+                <div key={s.id} className="flex items-center gap-1.5">
+                  <input
+                    value={s.phrase}
+                    onChange={(e) =>
+                      savePrefs({
+                        ...prefs,
+                        shortcuts: prefs.shortcuts.map((x) =>
+                          x.id === s.id ? { ...x, phrase: e.target.value } : x,
+                        ),
+                      })
+                    }
+                    className="hud-select w-[7rem] shrink-0"
+                  />
+                  <input
+                    value={s.prompt}
+                    onChange={(e) =>
+                      savePrefs({
+                        ...prefs,
+                        shortcuts: prefs.shortcuts.map((x) =>
+                          x.id === s.id ? { ...x, prompt: e.target.value } : x,
+                        ),
+                      })
+                    }
+                    className="hud-select min-w-0 flex-1"
+                  />
+                  <button
+                    onClick={() => {
+                      setTab("chat");
+                      void send(s.prompt);
+                    }}
+                    className="hud-tile flex h-6 w-6 items-center justify-center"
+                    aria-label="Run shortcut"
+                  >
+                    <Send className="h-3 w-3 text-cyan" />
+                  </button>
+                  <button
+                    onClick={() =>
+                      savePrefs({
+                        ...prefs,
+                        shortcuts: prefs.shortcuts.filter((x) => x.id !== s.id),
+                      })
+                    }
+                    className="hud-tile flex h-6 w-6 items-center justify-center"
+                    aria-label="Delete shortcut"
+                  >
+                    <Trash2 className="h-3 w-3 text-warn" />
+                  </button>
+                </div>
+              ))}
+              <button
+                onClick={() =>
+                  savePrefs({
+                    ...prefs,
+                    shortcuts: [
+                      ...prefs.shortcuts,
+                      { id: newId(), phrase: "new command", prompt: "Do something useful." },
+                    ],
+                  })
+                }
+                className="hud-tile px-2 py-1 text-[0.6rem] uppercase tracking-widest text-cyan"
+              >
+                Add shortcut
+              </button>
+
+              <div className="hud-title flex items-center gap-1 pt-1">
+                <Wand2 className="h-3.5 w-3.5" /> Macros
+              </div>
+              {prefs.macros.map((m) => (
+                <div key={m.id} className="space-y-1 rounded-sm border border-border bg-card/50 p-1.5">
+                  <div className="flex items-center gap-1.5">
+                    <input
+                      value={m.phrase}
+                      onChange={(e) =>
+                        savePrefs({
+                          ...prefs,
+                          macros: prefs.macros.map((x) =>
+                            x.id === m.id ? { ...x, phrase: e.target.value } : x,
+                          ),
+                        })
+                      }
+                      className="hud-select min-w-0 flex-1"
+                    />
+                    <button
+                      onClick={() => {
+                        setTab("chat");
+                        setBusyTask(m.phrase);
+                        void runMacro(m.steps).finally(() => setBusyTask(null));
+                      }}
+                      className="hud-tile flex h-6 w-6 items-center justify-center"
+                      aria-label="Run macro"
+                    >
+                      <Zap className="h-3 w-3 text-cyan" />
+                    </button>
+                    <button
+                      onClick={() =>
+                        savePrefs({ ...prefs, macros: prefs.macros.filter((x) => x.id !== m.id) })
+                      }
+                      className="hud-tile flex h-6 w-6 items-center justify-center"
+                      aria-label="Delete macro"
+                    >
+                      <Trash2 className="h-3 w-3 text-warn" />
+                    </button>
+                  </div>
+                  <textarea
+                    value={m.steps.join("\n")}
+                    onChange={(e) =>
+                      savePrefs({
+                        ...prefs,
+                        macros: prefs.macros.map((x) =>
+                          x.id === m.id
+                            ? { ...x, steps: e.target.value.split("\n").filter(Boolean) }
+                            : x,
+                        ),
+                      })
+                    }
+                    rows={2}
+                    className="hud-select w-full"
+                  />
+                </div>
+              ))}
+              <button
+                onClick={() =>
+                  savePrefs({
+                    ...prefs,
+                    macros: [
+                      ...prefs.macros,
+                      { id: newId(), phrase: "new macro", steps: ["Step one.", "Step two."] },
+                    ],
+                  })
+                }
+                className="hud-tile px-2 py-1 text-[0.6rem] uppercase tracking-widest text-cyan"
+              >
+                Add macro
+              </button>
+              {busyTask ? (
+                <p className="font-mono text-[0.6rem] text-cyan">Running “{busyTask}”…</p>
+              ) : null}
+            </div>
+
+            <div className="space-y-2">
+              <div className="hud-title flex items-center gap-1">
+                <Search className="h-3.5 w-3.5" /> Voice search
+              </div>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  const q = input.trim();
+                  if (!q) return;
+                  setTab("chat");
+                  void send(`Voice search: ${q}. Answer directly and concisely.`);
+                }}
+                className="flex gap-1.5"
+              >
+                <input
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="Search anything"
+                  className="hud-select min-w-0 flex-1"
+                />
+                <button className="hud-tile px-2 py-1 text-[0.6rem] uppercase tracking-widest text-cyan">
+                  Go
+                </button>
+              </form>
+
+              <div className="hud-title flex items-center gap-1 pt-1">
+                <BellRing className="h-3.5 w-3.5" /> Smart reminders
+              </div>
+              <div className="flex gap-1.5">
+                <input
+                  value={newMemory}
+                  onChange={(e) => setNewMemory(e.target.value)}
+                  placeholder="remind me in 10 minutes to stretch"
+                  className="hud-select min-w-0 flex-1"
+                />
+                <button
+                  onClick={() => {
+                    const r = parseReminder(newMemory);
+                    if (!r) {
+                      setError('Try: "remind me in 10 minutes to stretch"');
+                      return;
+                    }
+                    addReminder(r);
+                    setNewMemory("");
+                  }}
+                  className="hud-tile px-2 py-1 text-[0.6rem] uppercase tracking-widest text-cyan"
+                >
+                  Set
+                </button>
+              </div>
+              <ul className="space-y-1">
+                {prefs.reminders.length === 0 ? (
+                  <li className="hud-label">No reminders.</li>
+                ) : null}
+                {prefs.reminders.map((r) => (
+                  <li key={r.id} className="flex items-center gap-1.5 text-[0.62rem]">
+                    <span className={cn("flex-1", r.done && "text-muted-foreground line-through")}>
+                      {new Date(r.dueAt).toLocaleTimeString()} · {r.text}
+                    </span>
+                    <button
+                      onClick={() =>
+                        savePrefs({
+                          ...prefs,
+                          reminders: prefs.reminders.filter((x) => x.id !== r.id),
+                        })
+                      }
+                      aria-label="Delete reminder"
+                    >
+                      <Trash2 className="h-3 w-3 text-warn" />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+
+              <div className="hud-title flex items-center gap-1 pt-1">
+                <Languages className="h-3.5 w-3.5" /> Meeting & translation
+              </div>
+              <div className="flex flex-wrap items-center gap-1.5">
+                <button
+                  onClick={() => setMeetingOn((v) => !v)}
+                  className={cn(
+                    "hud-tile px-2 py-1 text-[0.6rem] uppercase tracking-widest",
+                    meetingOn ? "text-online" : "text-cyan",
+                  )}
+                >
+                  {meetingOn ? "Capturing" : "Meeting capture"}
+                </button>
+                <button
+                  onClick={() => setTranslateOn((v) => !v)}
+                  className={cn(
+                    "hud-tile px-2 py-1 text-[0.6rem] uppercase tracking-widest",
+                    translateOn ? "text-online" : "text-cyan",
+                  )}
+                >
+                  {translateOn ? "Translating" : "Live translate"}
+                </button>
+                <input
+                  value={prefs.translateTo}
+                  onChange={(e) => savePrefs({ ...prefs, translateTo: e.target.value })}
+                  className="hud-select w-[6rem]"
+                />
+              </div>
+              <button
+                onClick={() => {
+                  if (meetingLines.length === 0) {
+                    setError("Nothing captured yet.");
+                    return;
+                  }
+                  setTab("chat");
+                  void send(
+                    `Summarise this meeting transcript with key points and action items:\n\n${meetingLines.join("\n")}`,
+                  );
+                }}
+                className="hud-tile px-2 py-1 text-[0.6rem] uppercase tracking-widest text-cyan"
+              >
+                Summarise transcript
+              </button>
+              <div className="max-h-[8rem] space-y-1 overflow-y-auto pr-1">
+                {meetingLines.slice(-20).map((l, i) => (
+                  <p key={`m${i}`} className="font-mono text-[0.6rem] text-foreground/80">
+                    {l}
+                  </p>
+                ))}
+                {translations.slice(-10).map((t, i) => (
+                  <p key={`t${i}`} className="text-[0.6rem] text-cyan/85">
+                    {t.src} → <span className="text-foreground">{t.out}</span>
+                  </p>
+                ))}
+              </div>
+            </div>
+          </div>
+        ) : null}
+
 
         {tab === "chat" ? (
           <div className="flex min-h-0 flex-1 gap-3">
