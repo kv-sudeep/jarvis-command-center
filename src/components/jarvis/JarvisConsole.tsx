@@ -983,7 +983,19 @@ export function JarvisConsole({
               <div className="hud-title flex items-center gap-1 pt-1">
                 <BellRing className="h-3.5 w-3.5" /> Smart reminders
               </div>
-              <div className="flex gap-1.5">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  const r = parseReminder(newMemory);
+                  if (!r) {
+                    setError('Try: "remind me in 10 minutes to stretch"');
+                    return;
+                  }
+                  addReminder(r);
+                  setNewMemory("");
+                }}
+                className="flex gap-1.5"
+              >
                 <input
                   value={newMemory}
                   onChange={(e) => setNewMemory(e.target.value)}
@@ -991,20 +1003,13 @@ export function JarvisConsole({
                   className="hud-select min-w-0 flex-1"
                 />
                 <button
-                  onClick={() => {
-                    const r = parseReminder(newMemory);
-                    if (!r) {
-                      setError('Try: "remind me in 10 minutes to stretch"');
-                      return;
-                    }
-                    addReminder(r);
-                    setNewMemory("");
-                  }}
+                  type="submit"
                   className="hud-tile px-2 py-1 text-[0.6rem] uppercase tracking-widest text-cyan"
                 >
                   Set
                 </button>
-              </div>
+              </form>
+
               <ul className="space-y-1">
                 {prefs.reminders.length === 0 ? (
                   <li className="hud-label">No reminders.</li>
